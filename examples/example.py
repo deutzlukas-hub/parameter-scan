@@ -42,10 +42,12 @@ def example_volume_grid():
     # For each grid point we have a parameter dictionary'
     print(PG.param_grid[0,0,0])
     # For each parameter dictionary we have hash which 
-    # can be used as filenames
+    # can be used as a filename
     print(PG.filenames[0,0,0])
     
+if __name__ == '__main__':
     
+    example_volume_grid()
     
     
     
