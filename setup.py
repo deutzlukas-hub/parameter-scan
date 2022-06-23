@@ -3,22 +3,19 @@ Created on 23 Jun 2022
 
 @author: lukas
 '''
-
+import os
 from setuptools import setup
 
-ds = '''Module to create and save parameter grids for 
-parameter scans in which a subset of larger set of simulations 
-parameters is varied. For each grid point a unique parameter
-dictionary which is hashable.  
-The hash can be used as a filename to save the simulation results
-associated with the respective parameter dictionary'''
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name = 'parameter_scan',
     version = '0.1',
-    authoor = 'Lukas Deutz',
+    author = 'Lukas Deutz',
     author_email = 'scld@leeds.ac.uk',
-    description = ds,
+    description = 'Module to create, save and load parameter grids for parameter scans',
+    long_description = read('README.md'),
     url = 'https://github.com/LukasDeutz/parameter-scan.git',
     packages = ['parameter_scan']
 )

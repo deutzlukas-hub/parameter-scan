@@ -7,7 +7,7 @@ Created on 21 Jun 2022
 import numpy as np
 
 from parameter_scan.parameter_scan import ParameterGrid
-from parameter_scan.util import load_grid_param
+from parameter_scan.util import dict_hash, load_grid_param 
 
 def dummy_base_parameter():
     
