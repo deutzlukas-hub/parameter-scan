@@ -7,7 +7,7 @@ import itertools as it
 import numpy as np
 import json
 
-from util import dict_hash
+from parameter_scan.util import dict_hash
 
 class LineGrid():
     
