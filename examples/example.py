@@ -5,8 +5,8 @@ Created on 22 Jun 2022
 '''
 from parameter_scan.parameter_scan import ParameterGrid
 
-def example_volume_grid():
-    
+def dummy_base_parameter():
+
     base_parameter = {}
     
     # These are all simulation parameters
@@ -16,6 +16,41 @@ def example_volume_grid():
     base_parameter['d'] = 4.0
     base_parameter['d'] = -1.0
     base_parameter['f'] = -2.0
+
+    return base_parameter
+
+def example_line_grid():
+
+    base_parameter = dummy_base_parameter()
+
+    # These are the parameters we want to vary
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': None}
+    b_param = {'v_min': 100, 'v_max': 1000, 'N': 20, 'step': None, 'round': 0, 'log': None}
+
+    grid_param = {('a', 'b'): [a_param, b_param]}
+
+    PG = ParameterGrid(base_parameter, grid_param)
+
+    # Parameter names
+    print(PG.keys)
+    # Gird is line, therefore the parameter array is one dimensional 
+    print(PG.v_arr)
+        
+    # In this example, the parameters a,b are varied simultaneously
+    # and the entries in v_arr are tuples (a,b)  
+    print(PG.v_arr[0])
+    
+    # For each grid point we have a parameter dictionary'
+    print(PG.param_grid[0])
+    # For each parameter dictionary we have hash which 
+    # can be used as a filename
+    print(PG.filenames[0])
+
+    return
+
+def example_volume_grid():
+    
+    base_parameter = dummy_base_parameter()
     
     # These are the parameters we want to vary
     a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': None}
@@ -47,6 +82,7 @@ def example_volume_grid():
     
 if __name__ == '__main__':
     
+    example_line_grid()
     example_volume_grid()
     
     
