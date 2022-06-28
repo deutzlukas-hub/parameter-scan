@@ -122,15 +122,15 @@ class ParameterGrid():
             line_grid_list = [LineGrid(key, grid_line_param) for key, grid_line_param in grid_param.items()]
             self.grid = VolumeGrid(line_grid_list)
     
-        self.param_grid, self.filenames = self.create_param_grid()
-    
+        self.param_grid, self.hash_grid = self.create_param_and_hash_grid()
+                
     def __getitem__(self, s):
         
         if self.line:            
-            return self.grid[s], self.param_grid[s], self.filenames[s]            
+            return self.grid[s], self.param_grid[s], self.hash_grid[s]            
         else:        
             v_mat, v_arr_list = self.grid[s]        
-            return v_mat, v_arr_list, self.param_grid[s], self.filenames[s] 
+            return v_mat, v_arr_list, self.param_grid[s], self.hash_grid[s] 
     
     @property                            
     def keys(self):
@@ -152,8 +152,24 @@ class ParameterGrid():
         assert not self.line 
      
         return self.grid.v_mat
-                                                                           
-    def create_param_grid(self):
+    
+    @property
+    def param_arr(self):
+        
+        if self.line:
+            return self.param_grid
+        else:
+            return self.param_grid.flatten()
+    
+    @property
+    def hash_arr(self):
+        
+        if self.line:
+            return self.hash_grid
+        else:
+            return self.hash_grid.flatten()
+                                                           
+    def create_param_and_hash_grid(self):
                 
         if self.line:
                                     
@@ -173,12 +189,12 @@ class ParameterGrid():
                              
                 param_grid.append(param)
             
-            filenames = [dict_hash(p) for p in param_grid]
+            hash_grid = [dict_hash(p) for p in param_grid]
                                                                                     
         else:        
             
             param_grid = np.zeros_like(self.grid.v_mat)
-            filenames = np.zeros_like(self.grid.v_mat)
+            hash_grid = np.zeros_like(self.grid.v_mat)
             
             for i, tup in enumerate(self.grid.v_mat.flatten()):
                 
@@ -197,9 +213,9 @@ class ParameterGrid():
                         param[key] = v
 
                 param_grid[idx] = param
-                filenames[idx] = dict_hash(param)
+                hash_grid[idx] = dict_hash(param)
                 
-        return param_grid, filenames
+        return param_grid, hash_grid
                                                                     
     def save(self, _dir, prefix = ''):
         

@@ -24,8 +24,8 @@ def example_line_grid():
     base_parameter = dummy_base_parameter()
 
     # These are the parameters we want to vary
-    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': None}
-    b_param = {'v_min': 100, 'v_max': 1000, 'N': 20, 'step': None, 'round': 0, 'log': None}
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': False}
+    b_param = {'v_min': 100, 'v_max': 1000, 'N': 20, 'step': None, 'round': 0, 'log': False}
 
     grid_param = {('a', 'b'): [a_param, b_param]}
 
@@ -42,9 +42,10 @@ def example_line_grid():
     
     # For each grid point we have a parameter dictionary'
     print(PG.param_grid[0])
-    # For each parameter dictionary we have hash which 
-    # can be used as a filename
-    print(PG.filenames[0])
+    # For each parameter dictionary a hash is created  
+    # which can be used e.g. as a filename to save 
+    # associated simulation results
+    print(PG.hash_grid[0])
 
     return
 
@@ -53,8 +54,8 @@ def example_volume_grid():
     base_parameter = dummy_base_parameter()
     
     # These are the parameters we want to vary
-    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': None}
-    b_param = {'v_min': 100, 'v_max': 1000, 'N': 10, 'step': None, 'round': 0, 'log': None}
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': False}
+    b_param = {'v_min': 100, 'v_max': 1000, 'N': 10, 'step': None, 'round': 0, 'log': False}
     c_param = {'v_min': 0.0, 'v_max': 1, 'N': 5, 'step': None, 'round': 1, 'log': True}
     d_param = {'v_min': 3, 'v_max': 5, 'N': 5, 'step': None, 'round': 0, 'log': True}
 
@@ -76,10 +77,14 @@ def example_volume_grid():
     
     # For each grid point we have a parameter dictionary'
     print(PG.param_grid[0,0,0])
-    # For each parameter dictionary we have hash which 
-    # can be used as a filename
-    print(PG.filenames[0,0,0])
-    
+    # For each parameter dictionary a hash is created  
+    # which can be used e.g. as a filename to save 
+    # associated simulation results
+    print(PG.hash_grid[0,0,0])    
+    # Flattend parameter and hash arrays can be accessed via
+    print(PG.param_arr[0])
+    print(PG.hash_arr[0])
+                
 if __name__ == '__main__':
     
     example_line_grid()

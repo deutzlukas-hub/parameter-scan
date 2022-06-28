@@ -36,7 +36,7 @@ def test_line_grid_1():
     assert np.all(np.isclose(PG.v_arr, a_arr))
     
     assert np.all(np.isclose([p['a'] for p in PG.param_grid], a_arr)) 
-    assert np.all(dict_hash(p) == fn for p, fn in zip(PG.param_grid, PG.filenames))
+    assert np.all(dict_hash(p) == fn for p, fn in zip(PG.param_grid, PG.hash_grid))
     
     print('ParameterGrid and LineGrid class passed test 1')
     
@@ -62,7 +62,7 @@ def test_line_grid_2():
         
     assert np.all(np.isclose([p['a'] for p in PG.param_grid], a_arr)) 
     assert np.all(np.isclose([p['b'] for p in PG.param_grid], b_arr)) 
-    assert np.all(dict_hash(p) == fn for p, fn in zip(PG.param_grid, PG.filenames))
+    assert np.all(dict_hash(p) == fn for p, fn in zip(PG.param_grid, PG.hash_grid))
         
     print('ParameterGrid and LineGrid class passed test 2')
         
@@ -88,16 +88,13 @@ def test_volume_grid_1():
     assert np.all(np.isclose([v for v in PG.v_arr[1]], b_arr))
     assert np.all(np.isclose([v for v in PG.v_arr[2]], c_arr))
 
-    param_arr = PG.param_grid.flatten()
-    filenames = PG.filenames.flatten()
-    
     for i, t in enumerate(PG.v_mat.flatten()):
         
-        p = param_arr[i]
+        p = PG.param_arr[i]
         assert p['a'] == t[0]
         assert p['b'] == t[1]
         assert p['c'] == t[2]
-        assert dict_hash(p) == filenames[i]
+        assert dict_hash(p) == PG.hash_arr[i]
         
     print('ParameterGrid and VolumeGrid class passed test 1')
 
@@ -126,17 +123,14 @@ def test_volume_grid_2():
     assert np.all(np.isclose([v[0] for v in PG.v_arr[2]], c_arr))
     assert np.all(np.isclose([v[1] for v in PG.v_arr[2]], d_arr))
 
-    param_arr = PG.param_grid.flatten()
-    filenames = PG.filenames.flatten()
-
     for i, t in enumerate(PG.v_mat.flatten()):
         
-        p = param_arr[i]
+        p = PG.param_arr[i]
         assert p['a'] == t[0]
         assert p['b'] == t[1]
         assert p['c'] == t[2][0]
         assert p['d'] == t[2][1]
-        assert dict_hash(p) == filenames[i]
+        assert dict_hash(p) == PG.hash_arr[i]
                 
     print('ParameterGrid and VolumeGrid class passed test 2')
 
@@ -154,7 +148,7 @@ def test_line_slicing():
 
     PG = ParameterGrid(base_parameter, grid_param)
 
-    v_arr, param_grid, filenames = PG[2:-3:2]
+    v_arr, param_grid, filename_grid = PG[2:-3:2]
     
     a_arr = a_arr[2:-3:2]
     b_arr = b_arr[2:-3:2]
@@ -165,10 +159,9 @@ def test_line_slicing():
         
     assert np.all(np.isclose([p['a'] for p in param_grid], a_arr)) 
     assert np.all(np.isclose([p['b'] for p in param_grid], b_arr)) 
-    assert np.all(dict_hash(p) == fn for p, fn in zip(param_grid, filenames))
+    assert np.all(dict_hash(p) == fn for p, fn in zip(param_grid, filename_grid))
 
     print('ParameterGrid and LineGrid passed slicing test')
-
 
 def test_volume_slicing():
     
@@ -188,7 +181,7 @@ def test_volume_slicing():
 
     PG = ParameterGrid(base_parameter, grid_param)
     
-    v_mat, v_arr, param_grid, filenames = PG[::2, 5:, :-2]
+    v_mat, v_arr, param_grid, filename_grid = PG[::2, 5:, :-2]
     
     a_arr = a_arr[::2]
     b_arr = b_arr[5:]
@@ -203,7 +196,7 @@ def test_volume_slicing():
     assert np.all(np.isclose([v[1] for v in v_arr[2]], d_arr))
     
     param_arr = param_grid.flatten()
-    filenames = filenames.flatten()
+    filename_arr = filename_grid.flatten()
     
     for i, t in enumerate(v_mat.flatten()):
         
@@ -212,7 +205,7 @@ def test_volume_slicing():
         assert p['b'] == t[1]
         assert p['c'] == t[2][0]
         assert p['d'] == t[2][1]
-        assert dict_hash(p) == filenames[i]    
+        assert dict_hash(p) == filename_arr[i]    
     
     print('ParameterGrid and VolumeGrid passed slicing test')
 
@@ -234,7 +227,7 @@ def test_volume_save_and_load():
 
     PG = ParameterGrid(base_parameter, grid_param)
     
-    _dir = '../test/'
+    _dir = './'
     
     filename = PG.save(_dir)
     fp = _dir + filename + '.json'
