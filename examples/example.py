@@ -24,8 +24,8 @@ def example_line_grid():
     base_parameter = dummy_base_parameter()
 
     # These are the parameters we want to vary
-    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': False}
-    b_param = {'v_min': 100, 'v_max': 1000, 'N': 20, 'step': None, 'round': 0, 'log': False}
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': False, 'scale': None}
+    b_param = {'v_min': 100, 'v_max': 1000, 'N': 20, 'step': None, 'round': 0, 'log': False, 'scale': None}
 
     grid_param = {('a', 'b'): [a_param, b_param]}
 
@@ -54,10 +54,10 @@ def example_volume_grid():
     base_parameter = dummy_base_parameter()
     
     # These are the parameters we want to vary
-    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': False}
-    b_param = {'v_min': 100, 'v_max': 1000, 'N': 10, 'step': None, 'round': 0, 'log': False}
-    c_param = {'v_min': 0.0, 'v_max': 1, 'N': 5, 'step': None, 'round': 1, 'log': True}
-    d_param = {'v_min': 3, 'v_max': 5, 'N': 5, 'step': None, 'round': 0, 'log': True}
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': False, 'scale': None}
+    b_param = {'v_min': 100, 'v_max': 1000, 'N': 10, 'step': None, 'round': 0, 'log': False, 'scale': None}
+    c_param = {'v_min': 0.0, 'v_max': 1, 'N': 5, 'step': None, 'round': 1, 'log': True, 'scale': 1.2}
+    d_param = {'v_min': 3, 'v_max': 5, 'N': 5, 'step': None, 'round': 0, 'log': True, 'scale': 0.8}
 
     # We want to to create a 3 dimensional grid for parameter tuples (a, b, (c,d))
     grid_param = {'a': a_param, 'b': b_param, ('c', 'd'): [c_param, d_param]}
