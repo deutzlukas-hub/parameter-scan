@@ -181,7 +181,7 @@ def test_volume_slicing():
 
     PG = ParameterGrid(base_parameter, grid_param)
     
-    v_mat, v_arr, param_grid, filename_grid = PG[::2, 5:, :-2]
+    v_mat, v_arr, param_grid, hash_grid = PG[::2, 5:, :-2]
     
     a_arr = a_arr[::2]
     b_arr = b_arr[5:]
@@ -196,7 +196,7 @@ def test_volume_slicing():
     assert np.all(np.isclose([v[1] for v in v_arr[2]], d_arr))
     
     param_arr = param_grid.flatten()
-    filename_arr = filename_grid.flatten()
+    filename_arr = hash_grid.flatten()
     
     for i, t in enumerate(v_mat.flatten()):
         
@@ -229,8 +229,7 @@ def test_volume_save_and_load():
     
     _dir = './'
     
-    filename = PG.save(_dir)
-    fp = _dir + filename + '.json'
+    fp = PG.save(_dir)
 
     grid_param_2, _ = load_grid_param(fp)
     a_param_2 = grid_param_2['a']

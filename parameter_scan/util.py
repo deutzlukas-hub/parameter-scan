@@ -5,6 +5,8 @@ Created on 21 Jun 2022
 '''
 import json
 import hashlib
+import numpy as np
+import pickle
 
 def dict_hash(dictionary):
     """MD5 hash of a dictionary."""
@@ -35,3 +37,29 @@ def load_grid_param(filepath):
             grid_param[key] = grid_dict[f'grid_line_param_{i}']
 
     return grid_param, grid_dict['base_parameter']
+
+def load_file(data_path, hash, prefix = '', encoding = 'rb'):
+    
+    fn = prefix + hash      
+    data = pickle.load(open(data_path + fn + '.dat', encoding))
+    
+    return data
+
+def load_file_grid(hash_grid, data_path, prefix = '', encoding = 'rb'):
+
+        if type(hash_grid) == list:
+            s = (len(hash_grid),)
+            hash_arr = hash_grid
+        else:
+            s = hash_grid.shape
+            hash_arr = hash_grid.flatten()
+                
+        file_grid = np.zeros_like(hash_grid, dtype = np.object)
+                
+        for i, hash in enumerate(hash_arr):
+                   
+            idx = np.unravel_index(i, s)
+            file_grid[idx] = load_file(data_path, hash, prefix, encoding)
+                                     
+        return file_grid
+

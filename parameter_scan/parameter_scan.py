@@ -3,6 +3,7 @@ Created on 9 Jun 2022
 
 @author: lukas
 '''
+from os.path import isfile
 import itertools as it
 import numpy as np
 import json
@@ -127,6 +128,11 @@ class ParameterGrid():
             self.grid = VolumeGrid(line_grid_list)
     
         self.param_grid, self.hash_grid = self.create_param_and_hash_grid()
+        
+        self.grid_dict = self.create_grid_dict()
+        self.filename = dict_hash(self.grid_dict)
+        
+        return
                 
     def __getitem__(self, s):
         
@@ -143,6 +149,7 @@ class ParameterGrid():
             return self.grid.key        
         else:
             return self.grid.key_list
+    
     @property
     def v_arr(self):
         
@@ -150,6 +157,7 @@ class ParameterGrid():
             return self.grid.v_arr
         else:
             return self.grid.v_arr_list
+    
     @property                        
     def v_mat(self):
         
@@ -220,9 +228,9 @@ class ParameterGrid():
                 hash_grid[idx] = dict_hash(param)
                 
         return param_grid, hash_grid
-                                                                    
-    def save(self, _dir, prefix = ''):
-        
+
+    def create_grid_dict(self):
+
         grid_dict = {}
 
         grid_dict['n_keys'] = len(self.grid_param)
@@ -239,14 +247,23 @@ class ParameterGrid():
                 grid_dict[f'grid_line_param_{i}'] = grid_line_param
         
         grid_dict['base_parameter'] = self.base_parameter
+
+        return grid_dict
+                                                                            
+    def save(self, _dir, prefix = ''):
+                
+        fp  =_dir + prefix + self.filename + '.json'
         
+        if isfile(fp):
+            print('Grid file already exists!')
+            return fp
         
-        filename = dict_hash(grid_dict)
+        with open(fp, 'w') as f:
         
-        with open(_dir + prefix + filename + '.json', 'w') as f:
+            json.dump(self.grid_dict, f, indent=4)
         
-            json.dump(grid_dict, f, indent=4)
-        
-        return filename
+        return fp
+    
+
                     
 
