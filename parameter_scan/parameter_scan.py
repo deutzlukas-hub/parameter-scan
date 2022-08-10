@@ -142,6 +142,12 @@ class ParameterGrid():
             v_mat, v_arr_list = self.grid[s]        
             return v_mat, v_arr_list, self.param_grid[s], self.hash_grid[s] 
     
+    def __len__(self):
+        if self.line:
+            return len(self.param_grid)
+        else:
+            return np.size(self.param_grid)
+    
     @property                            
     def keys(self):
         
