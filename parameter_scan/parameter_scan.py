@@ -29,14 +29,8 @@ class LineGrid():
                                                             
         for grid_param in grid_line_param:
             
-            self.add_key(grid_param['v_min'], 
-                         grid_param['v_max'], 
-                         grid_param['N'], 
-                         grid_param['step'], 
-                         grid_param['round'], 
-                         grid_param['log'],
-                         grid_param['scale'])
-                                            
+            self.add_key(grid_param)
+                                                                    
         self.v_arr = self.get_line_vector()
         
         return
@@ -45,23 +39,41 @@ class LineGrid():
         
         return self.v_arr[s]
         
-    def add_key(self, v_min, v_max, N=None, step = None, _round = None, log = False, scale = None):
-                
-        if N is not None:
-            v_arr = np.linspace(v_min, v_max, N)
-        else:
-            assert step is not None, 'N or step must be not None'
-            v_arr = np.arange(v_min, v_max, step)
-                                                                        
-        if log:
+    def add_key(self, grid_param):
+
+        if 'v_min' in grid_param:
+
+            v_min = grid_param['v_min']
+            v_max = grid_param['v_max']
+            N = grid_param['N']
+            step = grid_param['step']
+
+            if N is not None:
+                v_arr = np.linspace(v_min, v_max, N)
+            else:
+                assert step is not None, 'N or step must be not None'
+                v_arr = np.arange(v_min, v_max, step)
+
+        elif 'v_tup' in grid_param:
+            
+            v_tup = grid_param['v_tup']
+            N_tup = grid_param['N_tup']
+                        
+            v_arr = []
+            
+            for v, N in zip(v_tup, N_tup):
+            
+                v_arr += N*[v]
+                                                                                    
+        if grid_param['log']:
             v_arr = 10**v_arr
         
-        if _round is not None:
-            v_arr = np.round(v_arr, _round)
+        if grid_param['round'] is not None:
+            v_arr = np.round(v_arr, grid_param['round'])
             
-        if scale is not None:
-            v_arr = scale * v_arr
-        
+        if grid_param['scale'] is not None:
+            v_arr = grid_param['scale'] * v_arr
+
         self.v_arr_list.append(v_arr)
         self.M = len(self.v_arr_list)
 
@@ -69,9 +81,9 @@ class LineGrid():
             self.N = len(v_arr)
         else:
             assert self.N == len(v_arr), 'New key must have same length'
-        
-        return
-        
+                  
+        return v_arr
+                    
     def get_line_vector(self):
                                         
         if self.M == 1:

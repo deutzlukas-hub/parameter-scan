@@ -66,6 +66,33 @@ def test_line_grid_2():
         
     print('ParameterGrid and LineGrid class passed test 2')
         
+def test_line_grid_3():
+
+    base_parameter = dummy_base_parameter()
+
+    N = 20
+    M = int(N/2)
+    
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': N, 'step': None, 'round': 2, 'log': None, 'scale': None}
+    b_param = {'v_tup': (1.0, 2.0), 'N_tup': (M, M), 'round': 0, 'log': None, 'scale': None}
+             
+    a_arr = np.round(np.linspace(a_param['v_min'], a_param['v_max'], a_param['N']), a_param['round'])        
+    b_arr = b_param['N_tup'][0]*[b_param['v_tup'][0]] + b_param['N_tup'][1]*[b_param['v_tup'][1]]
+
+    grid_param = {('a', 'b'): [a_param, b_param]}
+                        
+    PG = ParameterGrid(base_parameter, grid_param)
+    
+    assert len(PG.v_arr) == a_param['N']
+    assert np.all(np.isclose([v[0] for v in PG.v_arr], a_arr))
+    assert np.all(np.isclose([v[1] for v in PG.v_arr], b_arr))
+        
+    assert np.all(np.isclose([p['a'] for p in PG.param_grid], a_arr)) 
+    assert np.all(np.isclose([p['b'] for p in PG.param_grid], b_arr)) 
+    assert np.all(dict_hash(p) == fn for p, fn in zip(PG.param_grid, PG.hash_grid))
+
+    print('ParameterGrid and LineGrid class passed test 3')
+
 def test_volume_grid_1():
     
     base_parameter = dummy_base_parameter()
@@ -133,6 +160,42 @@ def test_volume_grid_2():
         assert dict_hash(p) == PG.hash_arr[i]
                 
     print('ParameterGrid and VolumeGrid class passed test 2')
+
+def test_volume_grid_3():
+    
+    base_parameter = dummy_base_parameter()
+
+    N = 20
+    M = int(N/2)
+    
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': N, 'step': None, 'round': 2, 'log': None, 'scale': None}
+    b_param = {'v_min': 100, 'v_max': 1000, 'N': N, 'step': None, 'round': 0, 'log': None, 'scale': None}
+    c_param = {'v_tup': (1.0, 2.0), 'N_tup': (M, M), 'round': 0, 'log': None, 'scale': None}
+
+    a_arr = np.round(np.linspace(a_param['v_min'], a_param['v_max'], a_param['N']), a_param['round'])    
+    b_arr = np.round(np.linspace(b_param['v_min'], b_param['v_max'], b_param['N']), b_param['round'])
+    c_arr = np.array(c_param['N_tup'][0]*[c_param['v_tup'][0]] + c_param['N_tup'][1]*[c_param['v_tup'][1]])
+
+    grid_param = {'a': a_param, ('b', 'c'): (b_param, c_param)}
+
+    PG = ParameterGrid(base_parameter, grid_param)
+
+    assert PG.keys == ['a', ('b', 'c')]
+    assert len(PG.v_arr) == 2
+    assert np.all(np.isclose([v for v in PG.v_arr[0]], a_arr))
+    assert np.all(np.isclose([v[0] for v in PG.v_arr[1]], b_arr))
+    assert np.all(np.isclose([v[1] for v in PG.v_arr[1]], c_arr))
+
+    for i, t in enumerate(PG.v_mat.flatten()):
+        
+        p = PG.param_arr[i]
+        assert p['a'] == t[0]
+        assert p['b'] == t[1][0]
+        assert p['c'] == t[1][1]
+        assert dict_hash(p) == PG.hash_arr[i]
+                
+    print('ParameterGrid and VolumeGrid class passed test 3')
+
 
 def test_line_slicing():
     
@@ -256,8 +319,10 @@ if __name__ == '__main__':
     
     test_line_grid_1()
     test_line_grid_2()
+    test_line_grid_3()    
     test_volume_grid_1()
     test_volume_grid_2()
+    test_volume_grid_3()    
     test_line_slicing()
     test_volume_slicing()
     test_volume_save_and_load()
