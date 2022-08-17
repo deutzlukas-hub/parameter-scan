@@ -69,6 +69,10 @@ class LineGrid():
             if grid_param['log']:
                 v_arr = 10**v_arr
         
+        if 'inverse' in grid_param:
+            if grid_param['inverse']:            
+                v_arr = 1/v_arr
+        
         if grid_param['round'] is not None:
             v_arr = np.round(v_arr, grid_param['round'])
             
@@ -76,9 +80,6 @@ class LineGrid():
             if grid_param['scale'] is not None:
                 v_arr = grid_param['scale'] * v_arr
 
-        if 'inverse' in grid_param:
-            if grid_param['inverse']:            
-                v_arr = 1/v_arr
             
         self.v_arr_list.append(v_arr)
         self.M = len(self.v_arr_list)
