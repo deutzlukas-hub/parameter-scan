@@ -45,7 +45,7 @@ def load_file(data_path, hash, prefix = '', encoding = 'rb'):
     
     return data
 
-def load_file_grid(hash_grid, data_path, prefix = '', encoding = 'rb'):
+def load_file_grid(hash_grid, data_path, prefix = '', encoding = 'rb', FS_only = False):
 
         if type(hash_grid) == list:
             s = (len(hash_grid),)
@@ -57,9 +57,14 @@ def load_file_grid(hash_grid, data_path, prefix = '', encoding = 'rb'):
         file_grid = np.zeros_like(hash_grid, dtype = np.object)
                 
         for i, hash in enumerate(hash_arr):
-                   
-            idx = np.unravel_index(i, s)
-            file_grid[idx] = load_file(data_path, hash, prefix, encoding)
-                                     
+            print(i)
+            idx = np.unravel_index(i, s)            
+            data = load_file(data_path, hash, prefix, encoding)
+            
+            if FS_only:
+                file_grid[idx] = data['FS']
+            else:
+                file_grid[idx] = data
+                                        
         return file_grid
 
