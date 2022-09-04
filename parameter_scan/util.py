@@ -38,14 +38,22 @@ def load_grid_param(filepath):
 
     return grid_param, grid_dict['base_parameter']
 
-def load_file(data_path, hash, prefix = '', encoding = 'rb'):
+def load_file(data_path, 
+              _hash, 
+              prefix = '', 
+              extension = '.dat',
+              encoding = 'rb'):
     
-    fn = prefix + hash      
-    data = pickle.load(open(data_path + fn + '.dat', encoding))
+    fn = prefix + _hash      
+    data = pickle.load(open(data_path + fn + extension, encoding))
     
     return data
 
-def load_file_grid(hash_grid, data_path, prefix = '', encoding = 'rb', FS_only = False):
+def load_file_grid(hash_grid, 
+                   data_path, 
+                   prefix = '', 
+                   extension = '.dat',
+                   encoding = 'rb'):
 
         if type(hash_grid) == list:
             s = (len(hash_grid),)
@@ -56,15 +64,11 @@ def load_file_grid(hash_grid, data_path, prefix = '', encoding = 'rb', FS_only =
                 
         file_grid = np.zeros_like(hash_grid, dtype = np.object)
                 
-        for i, hash in enumerate(hash_arr):
-            print(i)
+        for i, _hash in enumerate(hash_arr):
             idx = np.unravel_index(i, s)            
-            data = load_file(data_path, hash, prefix, encoding)
-            
-            if FS_only:
-                file_grid[idx] = data['FS']
-            else:
-                file_grid[idx] = data
-                                        
+            data = load_file(data_path, hash, prefix, extension, encoding)
+            file_grid[idx] = data
+                 
+                                                    
         return file_grid
 
