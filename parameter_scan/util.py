@@ -3,6 +3,7 @@ Created on 21 Jun 2022
 
 @author: lukas
 '''
+from os import path
 import json
 import hashlib
 import numpy as np
@@ -44,8 +45,8 @@ def load_file(data_path,
               extension = '.dat',
               encoding = 'rb'):
     
-    fn = prefix + _hash      
-    data = pickle.load(open(data_path + fn + extension, encoding))
+    fn = prefix + _hash + extension     
+    data = pickle.load(open(path.join(data_path, fn), encoding))
     
     return data
 
@@ -66,7 +67,7 @@ def load_file_grid(hash_grid,
                 
         for i, _hash in enumerate(hash_arr):
             idx = np.unravel_index(i, s)            
-            data = load_file(data_path, hash, prefix, extension, encoding)
+            data = load_file(data_path, _hash, prefix, extension, encoding)
             file_grid[idx] = data
                  
                                                     
