@@ -3,7 +3,7 @@ Created on 9 Jun 2022
 
 @author: lukas
 '''
-from os.path import isfile
+from os.path import isfile, join
 import itertools as it
 import numpy as np
 import json
@@ -260,7 +260,7 @@ class ParameterGrid():
 
         grid_dict['n_keys'] = len(self.grid_param)
         
-        # this need to be done because json can't dump tuple keys
+        # this needs to be done because json can't dump tuple keys
         for i, (key, grid_line_param) in enumerate(self.grid_param.items()):
             
             grid_dict[f'key_{i}'] = key
@@ -273,11 +273,15 @@ class ParameterGrid():
         
         grid_dict['base_parameter'] = self.base_parameter
 
+        # if hasattr(self, 'mask'):
+        #
+        #     pass
+
         return grid_dict
                                                                             
     def save(self, _dir, prefix = ''):
                 
-        fp  =_dir + prefix + self.filename + '.json'
+        fp  = join(_dir, prefix + self.filename + '.json')
         
         if isfile(fp):
             print('Grid file already exists!')
@@ -289,6 +293,25 @@ class ParameterGrid():
         
         return fp
     
-
-                    
-
+    def apply_mask(self, mask_hash_arr, **kwargs):
+                                
+        idx_arr = [np.where(hash, self.hash_arr)[0][0] for _hash in mask_hash_arr]
+            
+        for idx in idx_arr:            
+            param = self.param_arr[idx]            
+            for key, value in kwargs.items():                    
+                param[key] = value
+                
+            self.param_arr[idx] = param                
+            self.hash_arr[idx] = dict_hash(param)
+        
+        self.param_grid = self.param_arr.reshape(self.param_grid.shape)
+        self.hash_grid = self.hash_arr.reshape(self.hash_grid)
+        
+        
+        self.mask = kwargs
+        
+        
+        return
+        
+ 
