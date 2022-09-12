@@ -37,6 +37,16 @@ def load_grid_param(filepath):
         else:
             grid_param[key] = grid_dict[f'grid_line_param_{i}']
 
+    mask_hash_keys = [key for key in grid_dict.keys() if key.startswith('mask_hash_arr')]
+    mask_dict_keys = [key for key in grid_dict.keys() if key.startswith('mask_dict')]
+
+    if len(mask_hash_keys) > 0:
+        
+        hash_mask_arr_list = [grid_dict[key] for key in mask_hash_keys]
+        mask_dict_list = [grid_dict[key] for key in mask_dict_keys]
+                
+        return grid_param, grid_dict['base_parameter'], hash_mask_arr_list, mask_dict_list
+        
     return grid_param, grid_dict['base_parameter']
 
 def load_file(data_path, 

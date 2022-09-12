@@ -124,6 +124,25 @@ def test_volume_grid_1():
         assert dict_hash(p) == PG.hash_arr[i]
         
     print('ParameterGrid and VolumeGrid class passed test 1')
+    base_parameter = dummy_base_parameter()
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': None, 'scale': 1.5}
+    
+    a_arr = a_param['scale'] * np.round(np.linspace(a_param['v_min'], a_param['v_max'], a_param['N']), a_param['round'])    
+    
+    grid_param = {'a': a_param}
+
+    PG = ParameterGrid(base_parameter, grid_param)
+    
+    assert PG.keys == 'a'
+    assert len(PG.v_arr) == a_param['N']
+    assert np.all(np.isclose(PG.v_arr, a_arr))
+    
+    assert np.all(np.isclose([p['a'] for p in PG.param_grid], a_arr)) 
+    assert np.all(dict_hash(p) == fn for p, fn in zip(PG.param_grid, PG.hash_grid))
+    
+    print('ParameterGrid and LineGrid class passed test 1')
+    
+    return
 
 def test_volume_grid_2():
     
@@ -197,7 +216,7 @@ def test_volume_grid_3():
     print('ParameterGrid and VolumeGrid class passed test 3')
 
 
-def test_line_slicing():
+def test_line_grid_slicing():
     
     base_parameter = dummy_base_parameter()
 
@@ -226,7 +245,7 @@ def test_line_slicing():
 
     print('ParameterGrid and LineGrid passed slicing test')
 
-def test_volume_slicing():
+def test_volume_grid_slicing():
     
     base_parameter = dummy_base_parameter()
 
@@ -272,7 +291,7 @@ def test_volume_slicing():
     
     print('ParameterGrid and VolumeGrid passed slicing test')
 
-def test_volume_save_and_load():
+def test_volume_grid_save_and_load():
 
     base_parameter = dummy_base_parameter()
 
@@ -315,6 +334,152 @@ def test_volume_save_and_load():
 
     return
     
+def test_apply_mask_line_grid():
+    
+    base_parameter = dummy_base_parameter()
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': None, 'scale': 1.5}
+        
+    grid_param = {'a': a_param}
+
+    PG = ParameterGrid(base_parameter, grid_param)
+        
+    # select hashes for mask randomly                     
+    idx_arr = np.random.choice(len(PG), int(len(PG)/3), replace = False)    
+    hash_mask_arr = np.array(PG.hash_arr)[idx_arr]                            
+    PG.apply_mask(hash_mask_arr, b = 10*base_parameter['b'])
+             
+    assert np.all(np.isclose([param['b'] for param in PG.param_arr[idx_arr] ], 10*base_parameter['b'])) 
+    assert np.all(np.isclose([param['b'] for param in PG.param_grid[idx_arr]], 10*base_parameter['b'])) 
+
+    # select hashes for mask randomly                     
+    idx_arr = np.random.choice(len(PG), int(len(PG)/3), replace = False)    
+    hash_mask_arr = np.array(PG.hash_arr)[idx_arr]                            
+    PG.apply_mask(hash_mask_arr, b = 100*base_parameter['b'])
+
+    assert np.all(np.isclose([param['b'] for param in PG.param_arr[idx_arr] ], 100*base_parameter['b'])) 
+    assert np.all(np.isclose([param['b'] for param in PG.param_grid[idx_arr]], 100*base_parameter['b'])) 
+            
+    print('ParameterGrid and LineGrid passed apply_mask test')
+    
+    return
+
+def test_apply_mask_volume_grid():
+    
+    base_parameter = dummy_base_parameter()
+    
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': None, 'scale': 0.5}
+    b_param = {'v_min': 100, 'v_max': 1000, 'N': 10, 'step': None, 'round': 0, 'log': None, 'scale': None}
+    c_param = {'v_min': 0.0, 'v_max': 10, 'N': 10, 'step': None, 'round': 1, 'log': True, 'scale': None}
+
+    grid_param = {'a': a_param, 'b': b_param, 'c': c_param}
+
+    PG = ParameterGrid(base_parameter, grid_param)
+
+    # select hashes for mask randomly                     
+    idx_arr = np.random.choice(len(PG), int(len(PG)/3), replace = False)    
+    hash_mask_arr = np.array(PG.hash_arr)[idx_arr]                        
+    PG.apply_mask(hash_mask_arr, d = 10 * base_parameter['d'])
+    
+    assert np.all(np.isclose([param['d'] for param in PG.param_arr[idx_arr] ], 10*base_parameter['d'])) 
+    assert np.all(np.isclose([param['d'] for param in PG.param_grid.flatten()[idx_arr]], 10*base_parameter['d'])) 
+
+    # select hashes for mask randomly                     
+    idx_arr = np.random.choice(len(PG), int(len(PG)/3), replace = False)    
+    hash_mask_arr = np.array(PG.hash_arr)[idx_arr]                        
+    PG.apply_mask(hash_mask_arr, d = 100 * base_parameter['d'])
+    
+    assert np.all(np.isclose([param['d'] for param in PG.param_arr[idx_arr] ], 100*base_parameter['d'])) 
+    assert np.all(np.isclose([param['d'] for param in PG.param_grid.flatten()[idx_arr]], 100*base_parameter['d'])) 
+
+    print('ParameterGrid and VolumeGrid passed apply_mask test')
+    
+    return
+    
+def test_save_load_line_grid_with_mask(): 
+
+    base_parameter = dummy_base_parameter()
+    
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': None, 'scale': None}
+    b_param = {'v_min': 100, 'v_max': 1000, 'N': 20, 'step': None, 'round': 0, 'log': None, 'scale': None}
+                
+    grid_param = {('a', 'b'): [a_param, b_param]}
+
+    PG_1 = ParameterGrid(base_parameter, grid_param)
+                            
+    # select hashes for mask randomly                     
+    idx_arr = np.random.choice(len(PG_1), int(len(PG_1)/5), replace = False)    
+    hash_mask_arr = np.array(PG_1.hash_arr)[idx_arr]                        
+    PG_1.apply_mask(hash_mask_arr, c = 10 * base_parameter['c'])
+    
+    # select hashes for mask randomly                     
+    idx_arr = np.random.choice(len(PG_1), int(len(PG_1)/5), replace = False)    
+    hash_mask_arr = np.array(PG_1.hash_arr)[idx_arr]                        
+    PG_1.apply_mask(hash_mask_arr, c = 100 * base_parameter['c'])
+
+    _dir = './'
+    fp = PG_1.save(_dir)
+
+    PG_2 = ParameterGrid.init_pg_from_filepath(fp)
+
+    assert PG_1.filename == PG_2.filename 
+
+    for param1, param2 in zip(PG_1.param_arr, PG_2.param_arr):
+        
+        for key in param1.keys():            
+            assert param1[key] == param2[key]
+        
+    for param1, param2 in zip(PG_1.param_grid.flatten(), PG_2.param_grid.flatten()):
+        
+        for key in param1.keys():            
+            assert param1[key] == param2[key]
+        
+    print('ParameterGrid and LineGrid with mask passed save and load test')
+
+    return    
+    
+def test_save_load_volume_grid_with_mask(): 
+    
+    base_parameter = dummy_base_parameter()
+    
+    a_param = {'v_min': 0.0, 'v_max': 1.0, 'N': 20, 'step': None, 'round': 2, 'log': None, 'scale': 0.5}
+    b_param = {'v_min': 100, 'v_max': 1000, 'N': 10, 'step': None, 'round': 0, 'log': None, 'scale': None}
+    c_param = {'v_min': 0.0, 'v_max': 10, 'N': 10, 'step': None, 'round': 1, 'log': True, 'scale': None}
+
+    grid_param = {'a': a_param, 'b': b_param, 'c': c_param}
+
+    PG_1 = ParameterGrid(base_parameter, grid_param)
+
+    # select hashes for mask randomly                     
+    idx_arr = np.random.choice(len(PG_1), int(len(PG_1)/500), replace = False)    
+    hash_mask_arr = np.array(PG_1.hash_arr)[idx_arr]                        
+    PG_1.apply_mask(hash_mask_arr, d = 10 * base_parameter['d'])
+    
+    # select hashes for mask randomly                     
+    idx_arr = np.random.choice(len(PG_1), int(len(PG_1)/500), replace = False)    
+    hash_mask_arr = np.array(PG_1.hash_arr)[idx_arr]                        
+    PG_1.apply_mask(hash_mask_arr, d = 100 * base_parameter['d'])
+
+    _dir = './'
+    fp = PG_1.save(_dir)
+
+    PG_2 = ParameterGrid.init_pg_from_filepath(fp)
+
+    assert PG_1.filename == PG_2.filename 
+
+    for param1, param2 in zip(PG_1.param_arr, PG_2.param_arr):
+        
+        for key in param1.keys():            
+            assert param1[key] == param2[key]
+        
+    for param1, param2 in zip(PG_1.param_grid.flatten(), PG_2.param_grid.flatten()):
+        
+        for key in param1.keys():            
+            assert param1[key] == param2[key]
+        
+    print('ParameterGrid and VolumeGrid with mask passed save and load test')
+
+    return
+        
 if __name__ == '__main__':
     
     test_line_grid_1()
@@ -323,8 +488,14 @@ if __name__ == '__main__':
     test_volume_grid_1()
     test_volume_grid_2()
     test_volume_grid_3()    
-    test_line_slicing()
-    test_volume_slicing()
-    test_volume_save_and_load()
+    test_line_grid_slicing()
+    test_volume_grid_slicing()
+    test_volume_grid_save_and_load()
+    test_apply_mask_line_grid()
+    test_apply_mask_volume_grid()
+    test_save_load_line_grid_with_mask()
+    test_save_load_volume_grid_with_mask()
+    
+    
     
     

@@ -8,7 +8,7 @@ import itertools as it
 import numpy as np
 import json
 
-from parameter_scan.util import dict_hash
+from parameter_scan.util import dict_hash, load_grid_param
 
 class LineGrid():
     
@@ -132,6 +132,26 @@ class VolumeGrid():
     
 class ParameterGrid():
     
+    
+    @staticmethod
+    def init_pg_from_filepath(filepath): 
+            
+        grid = load_grid_param(filepath)                    
+        grid_param, base_parameter = grid[0], grid[1] 
+                
+        PG = ParameterGrid(base_parameter, grid_param)
+                    
+        # if len return tuple = 4, one or more masks have been applied 
+        if len(grid) == 4:
+            
+            hash_mask_arr_list, mask_dict_list = grid[2], grid[3]
+
+            for hash_mask_arr, mask_dict in zip(hash_mask_arr_list, mask_dict_list): 
+
+                PG.apply_mask(hash_mask_arr, **mask_dict)
+    
+        return PG
+     
     def __init__(self, base_parameter, grid_param):
 
         self.base_parameter = base_parameter    
@@ -226,7 +246,8 @@ class ParameterGrid():
                              
                 param_grid.append(param)
             
-            hash_grid = [dict_hash(p) for p in param_grid]
+            param_grid = np.array(param_grid)            
+            hash_grid = np.array([dict_hash(p) for p in param_grid])
                                                                                     
         else:        
             
@@ -273,12 +294,45 @@ class ParameterGrid():
         
         grid_dict['base_parameter'] = self.base_parameter
 
-        # if hasattr(self, 'mask'):
-        #
-        #     pass
-
+        if hasattr(self, 'hash_mask_arr_list'):
+            
+            for i, (hash_mask_arr, mask_dict) in enumerate(zip(self.hash_mask_arr_list, self.mask_dict_list)):
+            
+                if isinstance(hash_mask_arr, np.ndarray):
+                    hash_mask_arr = hash_mask_arr.tolist()
+            
+                grid_dict[f'mask_hash_arr_{i}'] = hash_mask_arr
+                grid_dict[f'mask_dict_{i}'] = mask_dict
+                
         return grid_dict
                                                                             
+    def apply_mask(self, hash_mask_arr, **kwargs):
+                                                                  
+        idx_arr = [np.argmax(_hash == np.array(self.hash_arr)) for _hash in hash_mask_arr]
+            
+        for idx in idx_arr:            
+            param = self.param_arr[idx]            
+            for key, value in kwargs.items():                    
+                param[key] = value
+                
+            self.param_arr[idx] = param                
+            self.hash_arr[idx] = dict_hash(param)
+        
+        self.param_grid = np.array(self.param_arr).reshape(self.param_grid.shape)
+        self.hash_grid = np.array(self.hash_arr).reshape(self.hash_grid.shape)
+
+        if not hasattr(self, 'hash_mask_arr_list'):
+            self.hash_mask_arr_list = []
+            self.mask_dict_list = []
+
+        self.hash_mask_arr_list.append(hash_mask_arr)
+        self.mask_dict_list.append(kwargs)
+        
+        self.grid_dict = self.create_grid_dict()
+        self.filename = dict_hash(self.grid_dict)
+                        
+        return
+
     def save(self, _dir, prefix = ''):
                 
         fp  = join(_dir, prefix + self.filename + '.json')
@@ -293,25 +347,5 @@ class ParameterGrid():
         
         return fp
     
-    def apply_mask(self, mask_hash_arr, **kwargs):
-                                
-        idx_arr = [np.where(hash, self.hash_arr)[0][0] for _hash in mask_hash_arr]
-            
-        for idx in idx_arr:            
-            param = self.param_arr[idx]            
-            for key, value in kwargs.items():                    
-                param[key] = value
-                
-            self.param_arr[idx] = param                
-            self.hash_arr[idx] = dict_hash(param)
-        
-        self.param_grid = self.param_arr.reshape(self.param_grid.shape)
-        self.hash_grid = self.hash_arr.reshape(self.hash_grid)
-        
-        
-        self.mask = kwargs
-        
-        
-        return
         
  
