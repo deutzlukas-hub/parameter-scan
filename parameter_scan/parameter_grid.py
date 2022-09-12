@@ -170,7 +170,12 @@ class ParameterGrid():
         
         self.grid_dict = self.create_grid_dict()
         self.filename = dict_hash(self.grid_dict)
-        
+                
+        # Hash mask
+        self.hash_mask_arr_list = []
+        self.mask_dict_list = []
+        self.mask_idx_arr_list = []                
+                                
         return
                 
     def __getitem__(self, s):
@@ -225,7 +230,28 @@ class ParameterGrid():
             return self.hash_grid
         else:
             return self.hash_grid.flatten()
-                                                           
+        
+    @property 
+    def mask_idx_arr(self):
+        
+        return self.mask_idx_arr_list[-1]
+                 
+    @property
+    def param_mask_arr(self):
+        
+        if not self.hash_mask_arr_list:
+            return self.param_arr
+        
+        return self.param_arr[self.mask_idx_arr]
+                
+    @property
+    def hash_mask_arr(self):
+        
+        if not self.hash_mask_arr_list:
+            return self.hash_arr
+        
+        return self.hash_arr[self.mask_idx_arr]
+                                                     
     def create_param_and_hash_grid(self):
                 
         if self.line:
@@ -307,27 +333,26 @@ class ParameterGrid():
         return grid_dict
                                                                             
     def apply_mask(self, hash_mask_arr, **kwargs):
-                                                                  
-        idx_arr = [np.argmax(_hash == np.array(self.hash_arr)) for _hash in hash_mask_arr]
-            
-        for idx in idx_arr:            
-            param = self.param_arr[idx]            
-            for key, value in kwargs.items():                    
-                param[key] = value
                 
-            self.param_arr[idx] = param                
-            self.hash_arr[idx] = dict_hash(param)
-        
-        self.param_grid = np.array(self.param_arr).reshape(self.param_grid.shape)
-        self.hash_grid = np.array(self.hash_arr).reshape(self.hash_grid.shape)
-
-        if not hasattr(self, 'hash_mask_arr_list'):
-            self.hash_mask_arr_list = []
-            self.mask_dict_list = []
-
+        for key in kwargs.keys():
+            assert key in self.base_parameter
+                                                                              
         self.hash_mask_arr_list.append(hash_mask_arr)
         self.mask_dict_list.append(kwargs)
         
+        idx_arr = [np.argmax(_hash == np.array(self.hash_arr)) for _hash in hash_mask_arr]
+        
+        self.mask_idx_arr_list.append(idx_arr)
+                                
+        for idx in idx_arr:            
+            param = self.param_arr[idx]            
+            for key, value in kwargs.items():                    
+                param[key] = value                
+                idx = np.unravel_index(idx, self.param_grid.shape)
+                
+                self.param_grid[idx] = param
+                self.hash_grid[idx] = dict_hash(param)
+                        
         self.grid_dict = self.create_grid_dict()
         self.filename = dict_hash(self.grid_dict)
                         
