@@ -73,12 +73,13 @@ class LineGrid():
             if grid_param['inverse']:            
                 v_arr = 1/v_arr
         
-        if grid_param['round'] is not None:
-            v_arr = np.round(v_arr, grid_param['round'])
-            
         if 'scale' in grid_param:            
             if grid_param['scale'] is not None:
                 v_arr = grid_param['scale'] * v_arr
+        
+        if grid_param['round'] is not None:
+            v_arr = np.round(v_arr, grid_param['round'])
+            
 
             
         self.v_arr_list.append(v_arr)
