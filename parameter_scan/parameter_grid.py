@@ -77,11 +77,17 @@ class LineGrid():
             if grid_param['scale'] is not None:
                 v_arr = grid_param['scale'] * v_arr
         
+        if 'scale' in grid_param:            
+            if grid_param['scale'] is not None:
+                v_arr = grid_param['scale'] * v_arr
+
+        if 'offset' in grid_param:            
+            if grid_param['offset'] is not None:
+                v_arr = v_arr + grid_param['offset']
+        
         if grid_param['round'] is not None:
             v_arr = np.round(v_arr, grid_param['round'])
-            
-
-            
+                        
         self.v_arr_list.append(v_arr)
         self.M = len(self.v_arr_list)
 
