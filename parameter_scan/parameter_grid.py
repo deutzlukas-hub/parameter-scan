@@ -366,7 +366,7 @@ class ParameterGrid():
         fp  = join(_dir, prefix + self.filename + '.json')
         
         if isfile(fp):
-            print('Grid file already exists!')
+            #print('Grid file already exists!')
             return fp
         
         with open(fp, 'w') as f:
