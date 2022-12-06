@@ -64,7 +64,11 @@ class LineGrid():
             for v, N in zip(v_tup, N_tup):
             
                 v_arr += N*[v]
-
+                
+        elif 'v_arr' in grid_param:
+            
+            v_arr = grid_param['v_arr']
+                        
         if 'log' in grid_param:                                                                                      
             if grid_param['log']:
                 v_arr = 10**v_arr
