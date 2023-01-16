@@ -87,6 +87,10 @@ class LineGrid():
         
         if grid_param['round'] is not None:
             v_arr = np.round(v_arr, grid_param['round'])
+        
+        if 'flip_lr' in grid_param:
+            if grid_param['flip_lr']:
+                v_arr = v_arr[::-1]
                         
         self.v_arr_list.append(v_arr)
         self.M = len(self.v_arr_list)
