@@ -191,18 +191,40 @@ class ParameterGrid():
                 
     def __getitem__(self, s):
         
-        if self.line:            
-            return self.grid[s], self.param_grid[s], self.hash_grid[s]            
-        else:        
-            v_mat, v_arr_list = self.grid[s]        
-            return v_mat, v_arr_list, self.param_grid[s], self.hash_grid[s] 
-    
+        idx_mat = np.indices(self.shape)
+        
+        idx_mat_out = []
+        
+        for idx in idx_mat:            
+            idx_mat_out.append(idx[s])
+        
+        return np.array(idx_mat_out)
+
+    def flat_index(self, idx_mat):
+        
+        flat_idx_mat = np.zeros((idx_mat.shape[0], np.prod(idx_mat.shape[1:])), dtype = int)
+        
+        for i, idx_arr in enumerate(idx_mat):
+            flat_idx_mat[i, :] = idx_arr
+            
+        flat_idx_arr = np.zeros(flat_idx_mat.shape[1], dtype = int)
+                
+        for i, multi_idx in enumerate(flat_idx_mat.T):
+            flat_idx_arr[i] = np.ravel_multi_index(multi_idx, self.shape)
+                                    
+        return flat_idx_arr
+                    
     def __len__(self):
         if self.line:
             return len(self.param_grid)
         else:
             return np.size(self.param_grid)
     
+    @property
+    def shape(self):
+
+        return self.param_grid.shape
+                                                      
     @property                            
     def keys(self):
         
@@ -210,7 +232,7 @@ class ParameterGrid():
             return self.grid.key        
         else:
             return self.grid.key_list
-    
+        
     @property
     def v_arr(self):
         
@@ -225,6 +247,31 @@ class ParameterGrid():
         assert not self.line 
      
         return self.grid.v_mat
+    
+    def v_from_key(self, key):
+        
+        kf = False # key found
+        
+        if self.line:
+            keys_list = [self.keys]
+        else:
+            keys_list = self.keys
+         
+        for i, keys in enumerate(keys_list):   
+            if type(keys) == str:
+                if keys == key:
+                    v_arr = self.v_arr
+                    kf = True
+                            
+            elif type(keys) == tuple:
+                if key in keys:
+                    idx = keys.index(key)
+                    v_arr = [t[idx] for t in self.v_arr[i]]
+                    kf = True
+                                                                   
+        assert kf, 'Key not found'
+        
+        return v_arr
     
     @property
     def param_arr(self):
@@ -262,7 +309,7 @@ class ParameterGrid():
             return self.hash_arr
         
         return self.hash_arr[self.mask_idx_arr]
-                                                     
+                                                         
     def create_param_and_hash_grid(self):
                 
         if self.line:
