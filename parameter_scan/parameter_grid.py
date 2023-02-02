@@ -254,19 +254,21 @@ class ParameterGrid():
         
         if self.line:
             keys_list = [self.keys]
+            v_arr_list = [self.v_arr]
         else:
             keys_list = self.keys
-         
+            v_arr_list = self.v_arr
+                    
         for i, keys in enumerate(keys_list):   
             if type(keys) == str:
                 if keys == key:
-                    v_arr = self.v_arr
+                    v_arr = v_arr_list[i]
                     kf = True
                             
             elif type(keys) == tuple:
                 if key in keys:
                     idx = keys.index(key)
-                    v_arr = [t[idx] for t in self.v_arr[i]]
+                    v_arr = np.array([t[idx] for t in v_arr_list[i]])                    
                     kf = True
                                                                    
         assert kf, 'Key not found'
