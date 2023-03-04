@@ -224,6 +224,11 @@ class ParameterGrid():
     def shape(self):
 
         return self.param_grid.shape
+    
+    @property
+    def dim(self):
+        
+        return self.param_grid.ndim
                                                       
     @property                            
     def keys(self):
