@@ -192,13 +192,47 @@ class ParameterGrid():
     def __getitem__(self, s):
         
         idx_mat = np.indices(self.shape)
-        
+                            
         idx_mat_out = []
         
         for idx in idx_mat:            
             idx_mat_out.append(idx[s])
         
-        return np.array(idx_mat_out)
+        idx_mat_out = np.array(idx_mat_out)
+        
+        if self.line: idx_mat_out=idx_mat_out.flatten()
+        
+        return idx_mat_out
+
+    def has_key(self, K):
+        
+        keys = self.keys
+        
+        has_k = False
+        
+        if type(keys) == list:
+            for key in keys:
+                if has_k: break                                                                
+                if type(key) == tuple:                 
+                    if K in key: 
+                        has_k = True 
+                        break
+                else: 
+                    if key == K:
+                        has_k = True
+                        break
+        else:
+            if type(keys) == tuple:
+                if K in k:
+                    has_k = True                    
+            else: 
+                if keys == K:
+                    has_k = True
+        
+        return has_k
+        
+        
+
 
     def flat_index(self, idx_mat):
         
