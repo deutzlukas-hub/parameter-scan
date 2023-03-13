@@ -204,15 +204,14 @@ class ParameterGrid():
         
         return idx_mat_out
 
-    def has_key(self, K):
+    def has_key(self, K, return_dim = False):
         
         keys = self.keys
         
         has_k = False
         
         if type(keys) == list:
-            for key in keys:
-                if has_k: break                                                                
+            for dim, key in enumerate(keys):
                 if type(key) == tuple:                 
                     if K in key: 
                         has_k = True 
@@ -222,6 +221,7 @@ class ParameterGrid():
                         has_k = True
                         break
         else:
+            dim = 0            
             if type(keys) == tuple:
                 if K in k:
                     has_k = True                    
@@ -229,11 +229,11 @@ class ParameterGrid():
                 if keys == K:
                     has_k = True
         
-        return has_k
+        if not return_dim:            
+            return has_k
+        else:
+            return has_k, dim
         
-        
-
-
     def flat_index(self, idx_mat):
         
         flat_idx_mat = np.zeros((idx_mat.shape[0], np.prod(idx_mat.shape[1:])), dtype = int)
