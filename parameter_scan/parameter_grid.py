@@ -239,7 +239,7 @@ class ParameterGrid():
         flat_idx_mat = np.zeros((idx_mat.shape[0], np.prod(idx_mat.shape[1:])), dtype = int)
         
         for i, idx_arr in enumerate(idx_mat):
-            flat_idx_mat[i, :] = idx_arr
+            flat_idx_mat[i, :] = idx_arr.flatten()
             
         flat_idx_arr = np.zeros(flat_idx_mat.shape[1], dtype = int)
                 
