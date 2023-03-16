@@ -12,6 +12,11 @@ import pickle
 def dict_hash(dictionary):
     """MD5 hash of a dictionary."""
     
+    # convert numpy types to primitive types
+    for k, v in dictionary.items():
+        if hasattr(v, 'dtype'):                    
+            dictionary[k] = v.item()
+    
     dhash = hashlib.md5()
     # We need to sort arguments so {'a': 1, 'b': 2} is
     # the same as {'b': 2, 'a': 1}
