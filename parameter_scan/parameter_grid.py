@@ -223,10 +223,10 @@ class ParameterGrid():
         else:
             dim = 0            
             if type(keys) == tuple:
-                if K in k:
+                if K in keys:
                     has_k = True                    
             else: 
-                if keys == K:
+                if K == keys:
                     has_k = True
         
         if not return_dim:            
