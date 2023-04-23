@@ -65,9 +65,8 @@ class LineGrid():
             
                 v_arr += N*[v]
                 
-        elif 'v_arr' in grid_param:
-            
-            v_arr = grid_param['v_arr']
+        elif 'v_arr' in grid_param:            
+            v_arr = np.array(grid_param['v_arr'])
                         
         if 'log' in grid_param:                                                                                      
             if grid_param['log']:
