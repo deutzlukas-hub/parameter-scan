@@ -142,7 +142,6 @@ class VolumeGrid():
     
 class ParameterGrid():
     
-    
     @staticmethod
     def init_pg_from_filepath(filepath): 
             
@@ -312,6 +311,29 @@ class ParameterGrid():
         assert kf, 'Key not found'
         
         return v_arr
+    
+    def v_mat_from_key(self, key):
+                
+        if self.line:
+            return self.v_from_key(key)
+        
+        kf = False # key found
+        keys_list = self.keys                    
+        
+        for i, keys in enumerate(keys_list):   
+            
+            if type(keys) == str:
+                if keys == key:
+                    kf = True
+                    v_key_mat = np.vectorize(lambda tup: tup[i])(self.v_mat)                                                  
+            elif type(keys) == tuple:
+                if key in keys:
+                    idx = keys.index(key)                                        
+                    v_key_mat = np.vectorize(lambda tup: tup[i][idx])(self.v_mat)
+                                                                           
+        assert kf, 'Key not found'
+                
+        return v_key_mat
     
     @property
     def param_arr(self):

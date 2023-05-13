@@ -3,7 +3,7 @@ Created on 22 Jun 2022
 
 @author: lukas
 '''
-from parameter_scan.parameter_scan import ParameterGrid
+from parameter_scan import ParameterGrid
 
 def dummy_base_parameter():
 
