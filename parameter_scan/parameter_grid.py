@@ -162,8 +162,7 @@ class ParameterGrid():
         return PG
      
     def __init__(self, base_parameter, grid_param):
-
-
+            
         self.base_parameter = base_parameter                    
         self.grid_param = grid_param
                 
@@ -420,7 +419,7 @@ class ParameterGrid():
                         param[key] = v
 
                 param_grid[idx] = param
-                hash_grid[idx] = dict_hash(param)
+                hash_grid[idx] = dict_hash(param.copy())
                 
         return param_grid, hash_grid
 
