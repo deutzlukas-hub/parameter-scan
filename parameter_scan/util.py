@@ -8,19 +8,31 @@ import json
 import hashlib
 import numpy as np
 import pickle
+from pint import Quantity
 
-def dict_hash(dictionary):
-    """MD5 hash of a dictionary."""
-    
-    # convert numpy types to primitive types
-    for k, v in dictionary.items():
+def make_hashable(_dict):
+
+    for k, v in _dict.items():
+        # Numpy array to list
         if hasattr(v, 'dtype'):                    
-            dictionary[k] = v.item()
+            _dict[k] = v.item()
+        # Quantity to dict
+        if isinstance(v, Quantity):
+            _dict[k] = [v.magnitude, str(v.units)]
+        # Dict to hashable dict
+        if isinstance(v, dict):
+            # Ignore quantity dictionaries          
+            _dict[k] = make_hashable(v)
+            
+    return _dict
+                            
+def dict_hash(dict):
+    """MD5 hash of a dict."""
     
+    dict = make_hashable(dict)
+                    
     dhash = hashlib.md5()
-    # We need to sort arguments so {'a': 1, 'b': 2} is
-    # the same as {'b': 2, 'a': 1}
-    encoded = json.dumps(dictionary, sort_keys=True).encode()
+    encoded = json.dumps(dict, sort_keys=True).encode()
     dhash.update(encoded)
     
     return dhash.hexdigest()

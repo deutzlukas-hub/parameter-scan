@@ -106,7 +106,7 @@ class LineGrid():
         if self.M == 1:
             v_arr = self.v_arr_list[0]
         else:                            
-            v_arr = np.zeros(self.N, dtype = np.object) 
+            v_arr = np.zeros(self.N, dtype = object) 
             
             for i in range(self.N):
                 v_arr[i] = tuple([self.v_arr_list[j][i] for j in range(self.M)])
@@ -132,7 +132,7 @@ class VolumeGrid():
         
         v_arr_list = [line_grid.get_line_vector() for line_grid in self.line_grid_list]
                         
-        v_mat = np.zeros(shape, dtype = np.object)
+        v_mat = np.zeros(shape, dtype = object)
         
         for i, tup in enumerate(it.product(*v_arr_list)):
                                 
@@ -163,7 +163,8 @@ class ParameterGrid():
      
     def __init__(self, base_parameter, grid_param):
 
-        self.base_parameter = base_parameter    
+
+        self.base_parameter = base_parameter                    
         self.grid_param = grid_param
                 
         if len(grid_param) == 1:
@@ -437,7 +438,7 @@ class ParameterGrid():
                     grid_dict[f'grid_line_param_{i}{j}'] = grid_line_param[j]                                
             else:                     
                 grid_dict[f'grid_line_param_{i}'] = grid_line_param
-        
+                
         grid_dict['base_parameter'] = self.base_parameter
 
         if hasattr(self, 'hash_mask_arr_list'):
