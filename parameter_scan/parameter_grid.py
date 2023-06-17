@@ -179,6 +179,8 @@ class ParameterGrid():
         self.param_grid, self.hash_grid = self.create_param_and_hash_grid()
         
         self.grid_dict = self.create_grid_dict()
+        # pass a copy of self.grid_dict because its entries
+        # must be manipulated to make it hashable
         self.filename = dict_hash(self.grid_dict)
                 
         # Hash mask
@@ -439,7 +441,7 @@ class ParameterGrid():
             else:                     
                 grid_dict[f'grid_line_param_{i}'] = grid_line_param
                 
-        grid_dict['base_parameter'] = self.base_parameter
+        grid_dict['base_parameter'] = self.base_parameter.copy()
 
         if hasattr(self, 'hash_mask_arr_list'):
             
