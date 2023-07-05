@@ -4,12 +4,12 @@ This is a python package to create, save and load parameter grids for parameter 
 
 #Installation
 
-First, you need a python 3.x enviroment. The only third-party package required is numpy.
+First, you need a python 3.x enviroment. The only third-party packages required is numpy and pint.
 
-The `parameter_scan` package can be installed into the active python environment using setup.py. From the parameter-scan package directory run
+The `parameter_scan` package can be installed into the active python environment using the setup.py. From the parameter-scan package directory run
 
 ```bash
-# The e option adds a symoblic link to the python 
+# The e option adds a symbolic link of the parameter_scan package to site-packages directory of the active environment 
 pip install -e . 
 ```
 
@@ -24,6 +24,6 @@ python ./tests/test.py
 
 #Usage
 
-The main interface is provided `ParameterGrid` class in the `parameter_scan.py` module. An example use case can be found in `/examples/example.py`. 
+The main interface is provided `ParameterGrid` class in the `parameter_scan.py` module. Example use cases can be found in `/examples/example.py`. 
 
 

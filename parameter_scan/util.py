@@ -8,7 +8,7 @@ import json
 import hashlib
 import numpy as np
 import pickle
-from pint import Quantity
+from pint import Quantity, Unit
 
 def make_hashable(_dict):
 
@@ -16,12 +16,15 @@ def make_hashable(_dict):
         # Numpy array to list
         if hasattr(v, 'dtype'):                    
             _dict[k] = v.item()
-        # Quantity to dict
+        # Quantity to list
         if isinstance(v, Quantity):
-            _dict[k] = [v.magnitude, str(v.units)]
+            if isinstance(v.magnitude, np.ndarray):
+                _dict[k] = [v.magnitude.tolist(), str(v.units)]            
+            else:
+                _dict[k] = [v.magnitude, str(v.units)]
+                                                                    
         # Dict to hashable dict
         if isinstance(v, dict):
-            # Ignore quantity dictionaries          
             _dict[k] = make_hashable(v)
             
     return _dict
