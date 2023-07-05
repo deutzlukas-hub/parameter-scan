@@ -7,8 +7,10 @@ from os.path import isfile, join
 import itertools as it
 import numpy as np
 import json
+import pint
 
 from parameter_scan.util import dict_hash, load_grid_param
+from matplotlib.pyplot import grid
 
 class LineGrid():
     
@@ -90,6 +92,10 @@ class LineGrid():
         if 'flip_lr' in grid_param:
             if grid_param['flip_lr']:
                 v_arr = v_arr[::-1]
+        
+        if 'quantity' in grid_param:
+            if grid_param['quantity'] is not None:
+                v_arr = v_arr * pint.Unit(grid_param['quantity'])
                         
         self.v_arr_list.append(v_arr)
         self.M = len(self.v_arr_list)
