@@ -313,7 +313,8 @@ class ParameterGrid():
             elif type(keys) == tuple:
                 if key in keys:
                     idx = keys.index(key)
-                    v_arr = np.array([t[idx] for t in v_arr_list[i]])                    
+                    v_arr = np.array([t[idx].magnitude if hasattr(t[idx], 'magnitude') 
+                        else t[idx] for t in v_arr_list[i]])                    
                     kf = True
                                                                    
         assert kf, 'Key not found'
