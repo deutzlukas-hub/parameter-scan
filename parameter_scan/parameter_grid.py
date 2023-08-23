@@ -9,7 +9,7 @@ import numpy as np
 import json
 import pint
 
-from parameter_scan.util import dict_hash, load_grid_param
+from parameter_scan.util import dict_hash, load_grid_param, make_hashable
 from matplotlib.pyplot import grid
 
 class LineGrid():
@@ -496,8 +496,8 @@ class ParameterGrid():
             return fp
         
         with open(fp, 'w') as f:
-        
-            json.dump(self.grid_dict, f, indent=4)
+
+            json.dump(make_hashable(self.grid_dict), f, indent=4)
         
         return fp
     
