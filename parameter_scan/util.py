@@ -13,24 +13,24 @@ from pint import Quantity, Unit
 
 def make_hashable(_dict):
 
-    _dict = copy.deepcopy(_dict)
+    hash_dict = copy.deepcopy(_dict)
 
-    for k, v in _dict.items():
+    for k, v in hash_dict.items():
         # Numpy array to list
         if hasattr(v, 'dtype'):                    
-            _dict[k] = v.item()
+            hash_dict[k] = v.item()
         # Quantity to list
         if isinstance(v, Quantity):
             if isinstance(v.magnitude, np.ndarray):
-                _dict[k] = [v.magnitude.tolist(), str(v.units)]            
+                hash_dict[k] = [v.magnitude.tolist(), str(v.units)]            
             else:
-                _dict[k] = [v.magnitude, str(v.units)]
+                hash_dict[k] = [v.magnitude, str(v.units)]
                                                                     
         # Dict to hashable dict
         if isinstance(v, dict):
-            _dict[k] = make_hashable(v)
+            hash_dict[k] = make_hashable(v)
             
-    return _dict
+    return hash_dict
                             
 def dict_hash(dict):
     """MD5 hash of a dict."""
