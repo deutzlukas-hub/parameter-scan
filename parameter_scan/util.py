@@ -4,6 +4,7 @@ Created on 21 Jun 2022
 @author: lukas
 '''
 from os import path
+import copy
 import json
 import hashlib
 import numpy as np
@@ -11,6 +12,8 @@ import pickle
 from pint import Quantity, Unit
 
 def make_hashable(_dict):
+
+    _dict = copy.deepcopy(_dict)
 
     for k, v in _dict.items():
         # Numpy array to list
