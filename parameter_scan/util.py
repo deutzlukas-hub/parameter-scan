@@ -43,6 +43,28 @@ def dict_hash(dict):
     
     return dhash.hexdigest()
 
+def restore_dict(hash_dict):
+    
+    dict = copy.deepcopy(hash_dict)
+    
+    for k, v in hash_dict.items():
+        # List to quantity
+        if isinstance(v, list):
+            if len(v)==2:
+                try:
+                    if isinstance(v[0], list):
+                        v[0] = np.array(v[0])                                        
+                    unit = ureg(v[1])
+                    param[k] = v[0]*unit                     
+                except:
+                    continue    
+                                                                                 
+        # Dict to hashable dict
+        if isinstance(v, dict):
+            hash_dict[k] = restore_dict(v)
+
+    return dict
+
 def load_grid_param(filepath):
     
     f = open(filepath)
