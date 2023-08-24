@@ -490,11 +490,7 @@ class ParameterGrid():
     def save(self, _dir, prefix = ''):
                 
         fp  = join(_dir, prefix + self.filename + '.json')
-        
-        if isfile(fp):
-            #print('Grid file already exists!')
-            return fp
-        
+                
         with open(fp, 'w') as f:
 
             json.dump(make_hashable(self.grid_dict), f, indent=4)
