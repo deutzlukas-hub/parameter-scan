@@ -96,7 +96,11 @@ class LineGrid():
         if 'quantity' in grid_param:
             if grid_param['quantity'] is not None:
                 v_arr = v_arr * pint.Unit(grid_param['quantity'])
-                        
+        
+        if 'int' in grid_param:
+            if grid_param['int']:            
+                v_arr = v_arr.astype(int) 
+                            
         self.v_arr_list.append(v_arr)
         self.M = len(self.v_arr_list)
 
