@@ -9,7 +9,7 @@ import json
 import hashlib
 import numpy as np
 import pickle
-from pint import Quantity, Unit
+from pint import Quantity, Unit, UnitRegistry
 
 def make_hashable(_dict):
 
@@ -43,11 +43,13 @@ def dict_hash(dict):
     
     return dhash.hexdigest()
 
-def restore_dict(hash_dict):
+def recover_hashed_dict(hash_dict):
+   
+    ureg = UnitRegistry()
+
+    recover_dict = copy.deepcopy(hash_dict)
     
-    dict = copy.deepcopy(hash_dict)
-    
-    for k, v in hash_dict.items():
+    for k, v in recover_dict.items():
         # List to quantity
         if isinstance(v, list):
             if len(v)==2:
@@ -55,15 +57,15 @@ def restore_dict(hash_dict):
                     if isinstance(v[0], list):
                         v[0] = np.array(v[0])                                        
                     unit = ureg(v[1])
-                    param[k] = v[0]*unit                     
+                    recover_dict[k] = v[0]*unit                     
                 except:
                     continue    
                                                                                  
-        # Dict to hashable dict
+        # Dict to dict with quantities
         if isinstance(v, dict):
             hash_dict[k] = restore_dict(v)
 
-    return dict
+    return recover_dict
 
 def load_grid_param(filepath):
     
@@ -92,7 +94,7 @@ def load_grid_param(filepath):
                 
         return grid_param, grid_dict['base_parameter'], hash_mask_arr_list, mask_dict_list
         
-    return grid_param, grid_dict['base_parameter']
+    return grid_param, recover_hashed_dict(grid_dict['base_parameter'])
 
 def load_file(data_path, 
               _hash, 

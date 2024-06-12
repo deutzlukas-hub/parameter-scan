@@ -4,7 +4,7 @@ This is a python package to create, save and load parameter grids for parameter 
 
 #Installation
 
-First, you need a python 3.x enviroment. The only third-party packages required is numpy and pint.
+First, you need a python 3.x environment. The only third-party packages required is numpy and pint.
 
 The `parameter_scan` package can be installed into the active python environment using the setup.py. From the parameter-scan package directory run
 
