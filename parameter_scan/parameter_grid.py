@@ -171,11 +171,12 @@ class ParameterGrid():
     
         return PG
      
-    def __init__(self, base_parameter, grid_param):
+    def __init__(self, base_parameter, grid_param, param_wrapper=None):
             
         self.base_parameter = base_parameter                    
         self.grid_param = grid_param
-                
+        self.param_wrapper = param_wrapper
+        
         if len(grid_param) == 1:
             self.line = True            
             self.grid = LineGrid(list(grid_param.keys())[0], list(grid_param.values())[0])
@@ -402,7 +403,9 @@ class ParameterGrid():
                         param[self.grid.key[i]] = v_i
                 else:
                     param[self.grid.key] = v
-                             
+                        
+                if self.param_wrapper is not None:
+                    param = self.param_wrapper(param)
                 param_grid.append(param)
             
             param_grid = np.array(param_grid)            
@@ -429,9 +432,12 @@ class ParameterGrid():
                     else:
                         param[key] = v
 
+                if self.param_wrapper is not None:
+                    param = self.param_wrapper(param)
+
                 param_grid[idx] = param
                 hash_grid[idx] = dict_hash(param.copy())
-                
+
         return param_grid, hash_grid
 
     def create_grid_dict(self):
