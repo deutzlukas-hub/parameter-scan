@@ -153,12 +153,12 @@ class VolumeGrid():
 class ParameterGrid():
     
     @staticmethod
-    def init_pg_from_filepath(filepath): 
+    def init_pg_from_filepath(filepath, param_wrapper=None):
             
         grid = load_grid_param(filepath)                    
         grid_param, base_parameter = grid[0], grid[1] 
                 
-        PG = ParameterGrid(base_parameter, grid_param)
+        PG = ParameterGrid(base_parameter, grid_param, param_wrapper)
                     
         # if len return tuple = 4, one or more masks have been applied 
         if len(grid) == 4:
