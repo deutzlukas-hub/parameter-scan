@@ -1,0 +1,10 @@
+name: parameter-scan
+channels:
+  - conda-forge
+dependencies:
+  - numpy
+  - pint
+  - h5py
+
+
+
