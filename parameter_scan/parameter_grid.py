@@ -10,7 +10,6 @@ import json
 import pint
 
 from parameter_scan.util import dict_hash, load_grid_param, make_hashable
-from matplotlib.pyplot import grid
 
 class LineGrid():
     
